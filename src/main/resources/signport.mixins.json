@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "tech.endorsed.signport.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"SignBlockEntityMixin",
+		"ServerPlayerInteractionManagerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

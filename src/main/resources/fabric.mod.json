@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "signport",
+	"version": "${version}",
+	"name": "signport",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "LGPLv3",
+	"icon": "assets/signport/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"tech.endorsed.signport.SignPort"
+		]
+	},
+	"mixins": [
+		"signport.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": ">=1.20",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
