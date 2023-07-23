@@ -2,6 +2,7 @@ package tech.endorsed.signport.mixin;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.block.entity.SignText;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,7 +38,10 @@ public class ServerPlayerInteractionManagerMixin {
             return;
         }
 
-        PortSignEntity.teleportToDestination(player, world, ((SignBlockEntity) blockEntity).getTextFacing(player));
+        // If we don't teleport, we can edit the sign normally
+        if (!PortSignEntity.teleportToDestination(player, world, ((SignBlockEntity)blockEntity).getTextFacing(player))) {
+            return;
+        }
         cir.setReturnValue(ActionResult.PASS);
         cir.cancel();
     }
