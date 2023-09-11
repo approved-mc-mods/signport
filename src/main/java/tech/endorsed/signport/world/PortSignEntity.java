@@ -39,6 +39,11 @@ public class PortSignEntity {
         return true;
     }
 
+    public static boolean isSignPortSign(SignText activeText) {
+        String line1 = activeText.getMessage(1, false).getString();
+        return line1.equalsIgnoreCase("[sp]") || line1.equalsIgnoreCase("[signport]");
+    }
+
     public static Pair<Boolean, Anchor> isValidPortSign(World world, SignText activeText) {
         Triplet<Boolean, Anchor, World> portSign = isValidPortSignWorld(world, activeText);
         return new Pair<>(portSign.getA(), portSign.getB());
@@ -47,8 +52,8 @@ public class PortSignEntity {
     public static Triplet<Boolean, Anchor, World> isValidPortSignWorld(World world, SignText activeText) {
         if  (world == null || world.isClient) return new Triplet<>(false, null, world);
 
-        String line1 = activeText.getMessage(1, false).getString();
-        if (!line1.equalsIgnoreCase("[sp]") && !line1.equalsIgnoreCase("[signport]")) return new Triplet<>(false, null, world);
+        if (!isSignPortSign(activeText)) return new Triplet<>(false, null, world);
+
         String line2 = activeText.getMessage(2, false).getString();
 
         AnchorState state = AnchorState.getServerState((ServerWorld) world);
@@ -82,7 +87,7 @@ public class PortSignEntity {
         MutableText text = (MutableText) activeText.getMessage(1, false);
         if (foundAnchor) {
             text.setStyle(text.getStyle().withColor(0x2FDD48));
-        } else {
+        } else if (isSignPortSign(activeText)) {
             text.setStyle(text.getStyle().withColor(0xFF0000));
         }
     }
