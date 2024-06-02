@@ -33,13 +33,13 @@ public class ServerPlayerInteractionManagerMixin {
                            BlockHitResult hitResult,
                            CallbackInfoReturnable<ActionResult> cir) {
         BlockEntity blockEntity = world.getBlockEntity(hitResult.getBlockPos());
-        if (!(blockEntity instanceof SignBlockEntity)) return;
+        if (!(blockEntity instanceof SignBlockEntity sign)) return;
         if (player.hasPermissionLevel(2) && player.isInPose(EntityPose.CROUCHING)) {
             return;
         }
 
         // If we don't teleport, we can edit the sign normally
-        if (!PortSignEntity.teleportToDestination(player, world, ((SignBlockEntity)blockEntity).getTextFacing(player))) {
+        if (!PortSignEntity.teleportToDestination(player, world, sign.getText(sign.isPlayerFacingFront(player)))) {
             return;
         }
         cir.setReturnValue(ActionResult.PASS);

@@ -1,6 +1,8 @@
 package tech.endorsed.signport.world;
 
+import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
@@ -11,13 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnchorState extends PersistentState {
+
     public List<Anchor> anchors = new ArrayList<>();
 
     public List<Anchor> GetAnchors() {
         return anchors;
     }
 
-    public static AnchorState createFromNbt(NbtCompound tag) {
+    public static AnchorState createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         AnchorState anchorState = new AnchorState();
 
         NbtCompound anchors = tag.getCompound("anchors");
@@ -37,7 +40,7 @@ public class AnchorState extends PersistentState {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtCompound anchorsCompound = new NbtCompound();
 
         anchors.forEach(anchor -> {
@@ -60,8 +63,7 @@ public class AnchorState extends PersistentState {
         PersistentStateManager persistentStateManager = world.getPersistentStateManager();
 
         return persistentStateManager.getOrCreate(
-                AnchorState::createFromNbt,
-                AnchorState::new,
+                new PersistentState.Type<>(AnchorState::new, AnchorState::createFromNbt, DataFixTypes.CHUNK),
                 SignPort.MOD_ID);
     }
 }
