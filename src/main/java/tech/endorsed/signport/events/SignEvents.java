@@ -28,7 +28,7 @@ public class SignEvents implements PlayerBlockBreakEvents.Before {
             if (!validPortSign.getLeft()) return true;
         }
 
-        player.sendMessage(Text.literal("You do not have permissions to remove port signs."));
+        player.sendMessage(Text.literal("You do not have permissions to remove port signs."), true);
 
         return false;
     }

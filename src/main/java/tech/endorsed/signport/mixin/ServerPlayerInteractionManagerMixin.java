@@ -42,6 +42,7 @@ public class ServerPlayerInteractionManagerMixin {
         if (!PortSignEntity.teleportToDestination(player, world, sign.getText(sign.isPlayerFacingFront(player)))) {
             return;
         }
+
         cir.setReturnValue(ActionResult.PASS);
         cir.cancel();
     }

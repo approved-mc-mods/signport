@@ -1,6 +1,7 @@
 package tech.endorsed.signport.world;
 
 import net.minecraft.block.entity.SignText;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -11,6 +12,8 @@ import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 import oshi.util.tuples.Triplet;
 import tech.endorsed.signport.SignPort;
+
+import java.util.EnumSet;
 
 public class PortSignEntity {
     public static boolean teleportToDestination(ServerPlayerEntity entity, World world, SignText activeText) {
@@ -33,8 +36,10 @@ public class PortSignEntity {
                 anchor.pos.getX(),
                 anchor.pos.getY(),
                 anchor.pos.getZ(),
+                EnumSet.noneOf(PositionFlag.class),
                 entity.getYaw(),
-                entity.getPitch());
+                entity.getPitch(),
+                false);
 
         return true;
     }
@@ -66,16 +71,16 @@ public class PortSignEntity {
         }
 
         String line3 = activeText.getMessage(3, false).getString();
-        ServerWorld dimensionWorld = world.getServer().getWorld(RegistryKey.of(RegistryKeys.WORLD, new Identifier(line3)));
+        ServerWorld dimensionWorld = world.getServer().getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(line3)));
         assert dimensionWorld != null;
 
-        SignPort.LOGGER.info("Checking for interdimensional teleports");
+        // Checking for interdimensional teleports
         AnchorState dimensionalAnchorState = AnchorState.getServerState(dimensionWorld);
         if (dimensionalAnchorState == null) return new Triplet<>(false, null, world);
 
         for (Anchor anchor: dimensionalAnchorState.GetAnchors()) {
             if (line2.equalsIgnoreCase(anchor.name)) {
-                SignPort.LOGGER.info("Found interdimensional teleport");
+                // Found interdimensional teleport
                 return new Triplet<>(true, anchor, dimensionWorld);
             }
         }
