@@ -1,11 +1,6 @@
 package tech.endorsed.signport.world;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Anchor {
     public String name;
@@ -21,21 +16,5 @@ public class Anchor {
     {
         this.name = name;
         this.pos = pos;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getX() {
-        return pos.getX();
-    }
-
-    public int getY() {
-        return pos.getY();
-    }
-
-    public int getZ() {
-        return pos.getZ();
     }
 }
