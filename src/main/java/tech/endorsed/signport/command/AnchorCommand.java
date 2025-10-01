@@ -54,14 +54,13 @@ public class AnchorCommand {
         AnchorState anchorState = AnchorState.getServerState(source.getWorld());
         if (anchorState == null) return 0;
 
-        for (Anchor anchor: anchorState.GetAnchors()) {
+        for (Anchor anchor : anchorState.GetAnchors()) {
             if (anchor.name.equals(name)) throw NAME_CLASH_EXCEPTION.create();
             if (anchor.pos.equals(pos)) throw CREATE_FAILED_EXCEPTION.create();
         }
 
-        Anchor anchor = new Anchor();
-        anchor.name = name;
-        anchor.pos = pos == null ? source.getPlayer().getBlockPos() : pos;
+        var aPos = pos == null ? source.getPlayer().getBlockPos() : pos;
+        Anchor anchor = new Anchor(name, aPos);
         anchorState.anchors.add(anchor);
         anchorState.markDirty();
 
@@ -78,7 +77,7 @@ public class AnchorCommand {
         if (anchorState == null) return 0;
 
         int i = 0;
-        for (Anchor anchor: anchorState.GetAnchors()) {
+        for (Anchor anchor : anchorState.GetAnchors()) {
             if (anchor.name.equals(name)) {
                 anchorState.anchors.remove(i);
                 anchorState.markDirty();
@@ -104,21 +103,20 @@ public class AnchorCommand {
 
         AnchorState anchorState = AnchorState.getServerState(source.getWorld());
         if (anchorState == null) return 0;
-        if (anchorState.GetAnchors().size() == 0) {
+        if (anchorState.GetAnchors().isEmpty()) {
             player.sendMessage(Text.literal("No anchors exist"));
-            return  1;
+            return 1;
         }
 
         int i = 1;
-        for (Anchor anchor: anchorState.GetAnchors()) {
+        for (Anchor anchor : anchorState.GetAnchors()) {
             MutableText message = Text.literal("[%d] %s [%d, %d, %d]"
                     .formatted(i, anchor.name, anchor.pos.getX(), anchor.pos.getY(), anchor.pos.getZ()));
 
             if (player.hasPermissionLevel(2)) {
                 message = message.setStyle(
                         message.getStyle().withClickEvent(
-                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @s %d %d %d"
-                                        .formatted(anchor.pos.getX(), anchor.pos.getY(), anchor.pos.getZ()))));
+                                new ClickEvent.RunCommand("/tp @s %d %d %d".formatted(anchor.pos.getX(), anchor.pos.getY(), anchor.pos.getZ()))));
             }
 
             player.sendMessage(message);

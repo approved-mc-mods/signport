@@ -14,7 +14,8 @@ public class SignPort implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, world) -> {
+		CommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess, world) -> {
 			AnchorCommand.register(dispatcher);
 		});
 
