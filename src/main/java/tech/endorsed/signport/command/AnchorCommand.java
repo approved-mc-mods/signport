@@ -34,11 +34,11 @@ public class AnchorCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(
                 literal("signport")
-                        .requires(source -> source.hasPermissionLevel(2))
                         .then(literal("tp")
                             .then(CommandManager.argument("name", StringArgumentType.word())
                                 .executes(context -> teleportAnchor(context.getSource(), StringArgumentType.getString(context, "name")))))
                         .then(literal("anchor")
+                                .requires(source -> source.hasPermissionLevel(2))
                                 .then(literal("list")
                                         .executes(context -> AnchorCommand.listAnchors(context.getSource())))
                                 .then(literal("delete")
@@ -51,7 +51,6 @@ public class AnchorCommand {
                                                         .executes(context -> AnchorCommand.createAnchor(context.getSource(), StringArgumentType.getString(context, "name"), BlockPosArgumentType.getLoadedBlockPos(context, "pos"))))))));
 
         dispatcher.register(literal("sp")
-                .requires(source -> source.hasPermissionLevel(2))
                 .redirect(literalCommandNode));
     }
 
