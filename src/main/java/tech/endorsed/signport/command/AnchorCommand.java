@@ -6,15 +6,20 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import oshi.util.tuples.Triplet;
 import tech.endorsed.signport.world.Anchor;
 import tech.endorsed.signport.world.AnchorState;
+
+import java.util.EnumSet;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -30,6 +35,9 @@ public class AnchorCommand {
         LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(
                 literal("signport")
                         .requires(source -> source.hasPermissionLevel(2))
+                        .then(literal("tp")
+                            .then(CommandManager.argument("name", StringArgumentType.word())
+                                .executes(context -> teleportAnchor(context.getSource(), StringArgumentType.getString(context, "name")))))
                         .then(literal("anchor")
                                 .then(literal("list")
                                         .executes(context -> AnchorCommand.listAnchors(context.getSource())))
@@ -45,6 +53,33 @@ public class AnchorCommand {
         dispatcher.register(literal("sp")
                 .requires(source -> source.hasPermissionLevel(2))
                 .redirect(literalCommandNode));
+    }
+
+    private static int teleportAnchor(ServerCommandSource source, String name) {
+        var player = source.getPlayer();
+        if (player == null) return 0;
+
+        var world = source.getWorld();
+        if (world == null) return 0;
+
+        var state = AnchorState.getServerState(world);
+
+        for (Anchor anchor: state.GetAnchors()) {
+            if (name.equals(anchor.name)) {
+                player.teleport(world,
+                        anchor.pos.getX(),
+                        anchor.pos.getY(),
+                        anchor.pos.getZ(),
+                        EnumSet.noneOf(PositionFlag.class),
+                        player.getYaw(),
+                        player.getPitch(),
+                        false);
+                return 1;
+            }
+        }
+
+        player.sendMessage(Text.literal("Could not find anchor '%s'".formatted(name)));
+        return 0;
     }
 
     public static int createAnchor(ServerCommandSource source, String name, BlockPos pos) throws CommandSyntaxException {
